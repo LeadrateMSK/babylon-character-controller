@@ -1,0 +1,39 @@
+module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
+  extends: [
+    'airbnb-base',
+    'airbnb-typescript/base',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+  ],
+  parserOptions: {
+    project: [
+      resolve(__dirname, './tsconfig.json'),
+      resolve(__dirname, './tsconfig.eslint.json'),
+    ],
+    ecmaVersion: 13,
+    parser: '@typescript-eslint/parser',
+    sourceType: 'module',
+  },
+  plugins: [
+    '@typescript-eslint',
+  ],
+  rules: {
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
+    'import/prefer-default-export': 'off',
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
+  },
+};
