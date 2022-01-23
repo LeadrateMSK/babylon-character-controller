@@ -6,6 +6,8 @@ import {
   ExecuteCodeAction,
   FollowCamera,
   KeyboardEventTypes,
+  MeshBuilder,
+  PhysicsImpostor,
   Scene,
   SceneLoader,
   ShadowGenerator,
@@ -18,15 +20,11 @@ import {
 } from '@babylonjs/core';
 import "@babylonjs/loaders/glTF";
 
-interface Player {
+export class Player {
   scene: Scene;
   camera: FollowCamera;
   engine: Engine;
   shadowGenerator: ShadowGenerator;
-}
-
-class Player {
-
   constructor(scene: Scene, camera: FollowCamera, engine: Engine, shadowGenerator: ShadowGenerator) {
     this.scene = scene;
     this.camera = camera;
@@ -35,32 +33,31 @@ class Player {
   }
 
   private skeleton: Skeleton;
+  private isGrounded: boolean;
+  private readonly jumpHeight = 1;
+  private isJumped = false;
 
   public create() {
-    SceneLoader.ImportMeshAsync('mixamorig:Skin', '../../img/textures/', 'dude.babylon', this.scene).then((result) => {
+    SceneLoader.ImportMeshAsync('mixamorig:Skin', '../../img/textures/', 'dude.babylon', this.scene).then(result => {
       const character = result.meshes[0];
       this.shadowGenerator.addShadowCaster(character, true);
-      // character.rotate(Axis.Y, Tools.ToRadians(180), Space.LOCAL);
       this.camera.lockedTarget = character;
-      // character.scaling = new Vector3(0.75, 0.75, 0.75);
 
       this.skeleton = result.skeletons[0];
-      
 
       this.idle();
 
       const inputs = {};
-      let isAnimating = false;
-      console.log(this.scene.animations)
+      let isWalkingAnimated = false;
+      let isRunningAnimated = false;
+
       this.scene.onKeyboardObservable.add((kbInfo) => {
         switch (kbInfo.type) {
           case KeyboardEventTypes.KEYDOWN:
-            inputs[kbInfo.event.key] = true;
-            console.log(kbInfo.event.key)
+            inputs[kbInfo.event.code] = true;
             break;
           case KeyboardEventTypes.KEYUP:
-            inputs[kbInfo.event.key] = false;
-            console.log(kbInfo.event.key)
+            inputs[kbInfo.event.code] = false;
             break;
         }
       });
@@ -69,55 +66,68 @@ class Player {
         const deltaTime = this.engine.getDeltaTime();
         const speed = 0.003 * deltaTime;
         const dashingSpeed = 0.006 * deltaTime;
-        const rotationSpeed = 0.0005 * deltaTime;
+        const rotationSpeed = 0.001 * deltaTime;
         let isKeyDown = false;
-        let isRunning = false;
-        
-        if (inputs['Shift']) {
-          isRunning = true;
-        } else {
-          isRunning = false;
+        let isRunning: boolean = inputs['ShiftLeft'];
+        this.isGrounded = character.getAbsolutePosition().y < 1;
+
+        if (inputs['Space'] && this.isGrounded) {
+
+          this.isJumped = true;
         }
 
-        if (inputs['w']) {
+        if (this.isJumped) {
+          if (character.position.y <= this.jumpHeight) {
+            character.moveWithCollisions(character.up.scaleInPlace(0.05));
+          } else {
+            console.log('fallo=ing')
+            character.moveWithCollisions(character.up.scaleInPlace(-0.05));
+          }
+
+          if (character.position.y <= 0.01) {
+            this.isJumped = false;
+          }
+        }
+
+        if (inputs['KeyW']) {
           isKeyDown = true;
-          if (inputs['w'] && isRunning) {
+          // console.log(inputs)
+          if (inputs['KeyW'] && isRunning) {
             character.moveWithCollisions(character.forward.scaleInPlace(dashingSpeed));
           } else {
             character.moveWithCollisions(character.forward.scaleInPlace(speed));
           }
-        } else if(inputs['s']) {
+        } else if(inputs['KeyS']) {
           isKeyDown = true;
           character.moveWithCollisions(character.forward.scaleInPlace(-speed));
         }
 
-        if (inputs['a']) {
+        if (inputs['KeyA']) {
           isKeyDown = true;
           character.rotate(Vector3.Up(), -rotationSpeed);
-        } else if (inputs['d']) {
+        } else if (inputs['KeyD']) {
           isKeyDown = true;
           character.rotate(Vector3.Up(), rotationSpeed);
         }
-
-        if (isKeyDown) {
-          if (!isAnimating) {
-            // console.log('anim', isDashing)
-            
-            console.log('anim', isRunning)
-
-              if(inputs['w'] && isRunning) {               
-                console.log('run')
-                this.run();
-              } else {
-                this.walk();
-              }
-
-              isAnimating = true;
-          }
                
+        if (isKeyDown) {
+
+          if (inputs['KeyW'] && isRunning) {
+            if(!isRunningAnimated) {               
+              this.run();
+              isRunningAnimated = true;
+              isWalkingAnimated = false;
+            }
+          } else if (!isWalkingAnimated) {
+            this.walk();
+            isRunningAnimated = false;
+            isWalkingAnimated = true;
+          }
+
         } else {
-          if (isAnimating) {
-            isAnimating = false;
+          if (isWalkingAnimated || isRunningAnimated) {
+            isWalkingAnimated = false;
+            isRunningAnimated = false;
             this.idle();
           }
         }
@@ -129,24 +139,15 @@ class Player {
   }
 
   public run() {
-    this.stopAnimations();
     this.scene.beginAnimation(this.skeleton, 127, 148, true, 1.0, () => this.idle());
   }
 
   public idle() {
-    this.stopAnimations();
     this.scene.beginAnimation(this.skeleton, 0, 90, true, 1.0);
   }
 
   public walk() {
-    this.stopAnimations();
     this.scene.beginAnimation(this.skeleton, 91, 126, true, 1.0, () => this.idle());
   }
 
-  private stopAnimations() {
-    // this.scene.stopAnimation(this.skeleton);
-  }
-
 }
-
-export default Player;

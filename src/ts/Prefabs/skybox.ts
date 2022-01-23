@@ -8,17 +8,26 @@ import {
   Texture,
 } from '@babylonjs/core';
 
-const createSkybox = (scene: Scene): Mesh => {
-  const skybox = MeshBuilder.CreateBox('skyBox', { size: 150 }, scene);
-  const skyboxMaterial = new StandardMaterial('skyBox', scene);
-  skyboxMaterial.backFaceCulling = false;
-  skyboxMaterial.reflectionTexture = new CubeTexture('../../img/textures/skybox', scene);
-  skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-  skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
-  skyboxMaterial.specularColor = new Color3(0, 0, 0);
-  skybox.material = skyboxMaterial;
+export class Skybox {
+  scene: Scene;
+  constructor(scene: Scene) {
+    this.scene = scene;
+  }
 
-  return skybox;
+  create() {
+    // const skybox = MeshBuilder.CreateBox('skyBox', { size: 150 }, this.scene);
+    // const skyboxMaterial = new StandardMaterial('skyBox', this.scene);
+    // skyboxMaterial.backFaceCulling = false;
+    // skyboxMaterial.reflectionTexture = new CubeTexture('../../img/textures/sh', this.scene);
+    // skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+    // skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+    // skyboxMaterial.specularColor = new Color3(0, 0, 0);
+    // skybox.material = skyboxMaterial;
+
+    const envTexture = CubeTexture.CreateFromPrefilteredData('../../img/textures/skyboxes/sky.env', this.scene);
+    this.scene.environmentTexture = envTexture;
+    this.scene.createDefaultSkybox(envTexture, true);
+  }
+  
 };
 
-export default createSkybox;

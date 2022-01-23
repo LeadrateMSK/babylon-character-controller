@@ -1,27 +1,68 @@
 import {
   MeshBuilder,
+  PBRMaterial,
   Scene,
   StandardMaterial,
   Texture,
 } from '@babylonjs/core';
 
-const createGround = (scene: Scene) => {
-  const groundMat = new StandardMaterial('groundMat', scene);
-  groundMat.diffuseTexture = new Texture('https://t4.ftcdn.net/jpg/02/75/27/03/360_F_275270350_Bui4WhKMWO8Jit1IcDZwZR0ZRhuI5Qv7.jpg', scene);
-  groundMat.diffuseTexture.hasAlpha = true;
+export class Ground {
+  scene: Scene;
+  constructor(scene: Scene) {
+    this.scene = scene;
+  }
 
-  const ground = MeshBuilder.CreateGround('ground', { width: 100, height: 100});
-  ground.material = groundMat;
-  ground.receiveShadows = true;
+  public create() {
+    const groundMat = this.createGroundMaterial();
 
-  // const largeGroundMat = new StandardMaterial('largeGroundMat', scene);
-  // largeGroundMat.diffuseTexture = new Texture('https://assets.babylonjs.com/environments/valleygrass.png', scene);
+    const ground = MeshBuilder.CreateGround('ground', { width: 60, height: 60});
+    ground.material = groundMat;
+    ground.receiveShadows = true;
+  }
 
-  // const largeGround = MeshBuilder.CreateGroundFromHeightMap('largeGround', 'https://assets.babylonjs.com/environments/villageheightmap.png', {
-  //   width: 150, height: 150, subdivisions: 20, minHeight: 0, maxHeight: 10,
-  // });
-  // largeGround.material = largeGroundMat;
-  // largeGround.position.y = -0.01;
+  private createGroundMaterial(): StandardMaterial {
+    const groundMat = new StandardMaterial('groundMat', this.scene);
+    const uvScale = 4;
+    const textureArr: Texture[] = [];
+
+    const diffuseTexture = new Texture('../../img/textures/rocks/aerial_rocks_diff.jpg', this.scene);
+    groundMat.diffuseTexture = diffuseTexture;
+    textureArr.push(diffuseTexture);
+
+    const normalTexture = new Texture('../../img/textures/rocks/aerial_rocks_norm.jpg', this.scene);
+    groundMat.bumpTexture = normalTexture;
+    textureArr.push(normalTexture);
+
+    const aoTexture = new Texture('../../img/textures/rocks/aerial_rocks_ao.jpg', this.scene);
+    groundMat.ambientTexture = aoTexture;
+    textureArr.push(aoTexture);
+
+    // const specTexture = new Texture('../../img/textures/stone/cobblestone_spec.jpg', this.scene);
+    // groundMat.specularTexture = specTexture;
+    // textureArr.push(specTexture);
+    groundMat.specularPower = 10;
+
+    textureArr.forEach(texture => {
+      texture.uScale = uvScale;
+      texture.vScale = uvScale;
+    });
+
+    return groundMat;
+  }
+
+  private createPBR() {
+    const pbr = new PBRMaterial('pbr', this.scene);
+
+    pbr.albedoTexture = new Texture('../../img/textures/rocks/aerial_rocks_diff.jpg', this.scene);
+    pbr.bumpTexture = new Texture('../../img/textures/rocks/aerial_rocks_norm.jpg', this.scene);
+    pbr.ambientTexture = new Texture('../../img/textures/rocks/aerial_rocks_ao.jpg', this.scene);
+
+    pbr.useAmbientOcclusionFromMetallicTextureRed = true;
+    pbr.useRoughnessFromMetallicTextureGreen = true;
+    pbr.useMetallnessFromMetallicTextureBlue = true;
+    pbr.roughness = 1;
+
+    return pbr;
+  }
+  
 };
-
-export default createGround;
