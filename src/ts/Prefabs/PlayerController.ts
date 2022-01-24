@@ -39,7 +39,7 @@ export class PlayerController {
 
   private skeleton: Skeleton;
   private isGrounded: boolean;
-  private readonly jumpHeight = 2;
+  private readonly jumpHeight = 1.5;
   private isJumped = false;
 
   public create() {
@@ -70,8 +70,10 @@ export class PlayerController {
       });
 
       this.scene.registerBeforeRender(() => {
-
-        const ray = new Ray(character.position, new Vector3(0, 0.01, 0), 0.01);
+        const deltaTime = this.engine.getDeltaTime();
+        const jumpForce = 0.007 * deltaTime;
+        const fallingForce = 0.008 * deltaTime;
+        const ray = new Ray(character.position, new Vector3(0, 0.1, 0), 0.1);
         const rayHelper = new RayHelper(ray);
         rayHelper.show(this.scene, new Color3(1, 0, 0));
 
@@ -79,21 +81,18 @@ export class PlayerController {
         if (pick) this.isGrounded = pick.hit;
 
         if (inputs['Space'] && this.isGrounded) {
-          if (character.position.y < this.jumpHeight) {
-            character.moveWithCollisions(character.up.scaleInPlace(0.5))
-          } else {
-            this.isJumped = true;
-            
-          }
-          
+          this.isJumped = true;      
         }
 
         if (this.isJumped) {
-          
-          character.moveWithCollisions(character.up.scaleInPlace(-0.1))
-          if (character.position.y <= 0.01) {
+          if (character.position.y < this.jumpHeight) {
+            character.moveWithCollisions(character.up.scaleInPlace(jumpForce));
+          } else {
             this.isJumped = false;
           }
+        } else if (!this.isGrounded) {
+          character.moveWithCollisions(character.up.scaleInPlace(-fallingForce));
+          if(character.position.y < 0) character.position.y = 0; 
         }
       })
 
