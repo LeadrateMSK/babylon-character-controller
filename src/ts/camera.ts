@@ -1,4 +1,9 @@
-import { ArcRotateCamera, FollowCamera, Scene, Vector3 } from '@babylonjs/core';
+import {
+  ArcRotateCamera,
+  FollowCamera,
+  Scene,
+  Vector3,
+} from '@babylonjs/core';
 
 const createCamera = (scene: Scene, canvas: HTMLCanvasElement) => {
   // eslint-disable-next-line max-len
@@ -9,7 +14,7 @@ const createCamera = (scene: Scene, canvas: HTMLCanvasElement) => {
   camera.attachControl();
   camera.radius = -10;
   camera.upperRadiusLimit = 0;
-  camera.lowerRadiusLimit =  -10;
+  camera.lowerRadiusLimit = -10;
   camera.rotationOffset = 0;
 
   camera.heightOffset = 4;

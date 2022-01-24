@@ -10,8 +10,10 @@ import {
 
 export class Skybox {
   scene: Scene;
+
   constructor(scene: Scene) {
     this.scene = scene;
+    this.create();
   }
 
   create() {
@@ -27,7 +29,6 @@ export class Skybox {
     const envTexture = CubeTexture.CreateFromPrefilteredData('../../img/textures/skyboxes/sky.env', this.scene);
     this.scene.environmentTexture = envTexture;
     this.scene.createDefaultSkybox(envTexture, true);
+    this.scene.environmentIntensity = 0.5;
   }
-  
-};
-
+}

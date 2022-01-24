@@ -8,33 +8,37 @@ import {
   ExecuteCodeAction,
   ActionManager,
   KeyboardEventTypes,
+  SceneLoader,
+  HemisphericLight,
 } from '@babylonjs/core';
 
 import createCamera from './camera';
 import { Ground } from './Prefabs/Ground';
-import { Player } from './Prefabs/Player';
+import { CustomLight } from './Prefabs/CustomLight';
+import { PlayerController } from './Prefabs/PlayerController';
 import { Skybox } from './Prefabs/Skybox';
+import { CustomModel } from './Prefabs/CustomModel';
+import { CustomPhysicsImpostor } from './Prefabs/CustomPhysicsImpostor';
 
 function createScene(canvas: HTMLCanvasElement) {
   const engine = new Engine(canvas);
   const scene = new Scene(engine);
-  const light = new DirectionalLight('light', new Vector3(-0.5, -3, -1), scene);
-  light.position = new Vector3(-80, 80, -40);
-  light.intensity = 0.8;
 
-  const shadowGenerator = new ShadowGenerator(1024, light);
-
-  
-  const skybox = new Skybox(scene);
-  skybox.create();
-  
-  const ground = new Ground(scene);
-  ground.create();
+  scene.collisionsEnabled = true;
   
   const camera = createCamera(scene, canvas);
-  const player = new Player(scene, camera, engine, shadowGenerator);
-  player.create();
-  
+
+  const light = new CustomLight(scene);
+  const pointLight = light.createPointLight();
+  const spotLight = light.createSpotLight();
+  const shadowGenerator = light.createShadowGenerator(spotLight);
+
+  const skybox = new Skybox(scene);
+  const ground = new Ground(scene);
+  const physicsimpostor = new CustomPhysicsImpostor(scene, ground.getGroundMesh());
+  const player = new PlayerController(scene, camera, engine, shadowGenerator);
+  const customModel = new CustomModel(scene, shadowGenerator, pointLight);
+
   engine.runRenderLoop(() => {
     scene.render();
   });

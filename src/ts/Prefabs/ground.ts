@@ -1,4 +1,5 @@
 import {
+  Mesh,
   MeshBuilder,
   PBRMaterial,
   Scene,
@@ -8,16 +9,24 @@ import {
 
 export class Ground {
   scene: Scene;
+  ground: Mesh;
   constructor(scene: Scene) {
     this.scene = scene;
+    this.ground = this.create();
   }
 
   public create() {
-    const groundMat = this.createGroundMaterial();
+    const groundMat = this.createGroundMaterialPBR();
 
     const ground = MeshBuilder.CreateGround('ground', { width: 60, height: 60});
     ground.material = groundMat;
     ground.receiveShadows = true;
+
+    return ground;
+  }
+
+  public getGroundMesh() {
+    return this.ground;
   }
 
   private createGroundMaterial(): StandardMaterial {
@@ -50,17 +59,34 @@ export class Ground {
     return groundMat;
   }
 
-  private createPBR() {
+  private createGroundMaterialPBR(): PBRMaterial {
     const pbr = new PBRMaterial('pbr', this.scene);
+    const uvScale = 2.5;
+    const textureArr: Texture[] = [];
 
-    pbr.albedoTexture = new Texture('../../img/textures/rocks/aerial_rocks_diff.jpg', this.scene);
-    pbr.bumpTexture = new Texture('../../img/textures/rocks/aerial_rocks_norm.jpg', this.scene);
-    pbr.ambientTexture = new Texture('../../img/textures/rocks/aerial_rocks_ao.jpg', this.scene);
+    const albedoTexture = new Texture('../../img/textures/rocks/aerial_rocks_diff.jpg', this.scene);
+    pbr.albedoTexture = albedoTexture;
+    textureArr.push(albedoTexture);
+
+    const normalTexture = new Texture('../../img/textures/rocks/aerial_rocks_norm.jpg', this.scene);
+    pbr.bumpTexture = normalTexture;
+    textureArr.push(normalTexture);
+
+    const aoTexture = new Texture('../../img/textures/rocks/aerial_rocks_ao.jpg', this.scene);
+    pbr.ambientTexture = aoTexture;
+    textureArr.push(aoTexture);
+
+    textureArr.forEach(texture => {
+      texture.uScale = uvScale;
+      texture.vScale = uvScale;
+    });
 
     pbr.useAmbientOcclusionFromMetallicTextureRed = true;
     pbr.useRoughnessFromMetallicTextureGreen = true;
     pbr.useMetallnessFromMetallicTextureBlue = true;
+
     pbr.roughness = 1;
+    pbr.specularIntensity = 5;
 
     return pbr;
   }
