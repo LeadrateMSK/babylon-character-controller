@@ -51,7 +51,7 @@ export class CustomLight {
   }
 
   public createSpotLight(): SpotLight {
-    const spotLight = new SpotLight('spotLight', new Vector3(5, 2, 0), new Vector3(-3, -0.5, 0), Tools.ToRadians(90), 10, this.scene);
+    const spotLight = new SpotLight('spotLight', new Vector3(-13, 2, 14.4), new Vector3(3, -0.5, -3), Tools.ToRadians(90), 10, this.scene);
     spotLight.intensity = 100;
     spotLight.shadowEnabled = true;
     spotLight.shadowMinZ = 1;

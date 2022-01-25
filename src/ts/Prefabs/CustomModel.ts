@@ -6,6 +6,7 @@ import {
   Scene,
   SceneLoader,
   ShadowGenerator,
+  Tools,
   Vector3
 } from '@babylonjs/core';
 
@@ -74,5 +75,22 @@ export class CustomModel {
       }
     });
 
+    SceneLoader.ImportMesh('', '../../img/models/', 'blacksmith.glb', this.scene, (meshes) => {
+      const blacksmith = meshes[0];
+      meshes.forEach(mesh => mesh.checkCollisions = true);
+      blacksmith.scaling = new Vector3(3.8, 3.8, 3.8);
+      blacksmith.position = new Vector3(-17, 0, 16);
+      blacksmith.rotation = new Vector3(0, Tools.ToRadians(-140), 0);
+
+    });
+
+    SceneLoader.ImportMesh('', '../../img/models/', 'house.glb', this.scene, (meshes) => {
+      const blacksmith = meshes[0];
+      meshes.forEach(mesh => mesh.checkCollisions = true);
+      blacksmith.scaling = new Vector3(0.1, 0.1, 0.1);
+      blacksmith.position = new Vector3(-22, 0, 11);
+      blacksmith.rotation = new Vector3(0, Tools.ToRadians(130), 0);
+
+    })
   }
 }
