@@ -48,5 +48,31 @@ export class CustomModel {
       this.shadowGenerator.addShadowCaster(campfire);
     });
 
+    SceneLoader.ImportMesh('', '../../img/models/', 'tree.glb', this.scene, (meshes) => {
+      const tree = meshes[0];
+      meshes.forEach(mesh => mesh.checkCollisions = true);
+      tree.position = new Vector3(-1, 0, 13);
+      tree.receiveShadows = true;
+      tree.checkCollisions = true;
+      tree.showBoundingBox = true;
+      this.shadowGenerator.addShadowCaster(tree);
+
+      const treesPos = [
+        new Vector3(-1, 0, 0.5),
+        new Vector3(-5, 0, 2),
+      ];
+
+      const treesScale = [
+        new Vector3(0.8, 0.8, 0.8),
+        new Vector3(0.9, 0.9, 0.9)
+      ];
+
+      for (let i = 0; i < treesPos.length; i++) {
+        let clone = tree.clone(`clone${i}`, tree);
+        clone.position = treesPos[i];
+        clone.scaling = treesScale[i];
+      }
+    });
+
   }
 }

@@ -5,26 +5,39 @@ import {
   Vector3,
 } from '@babylonjs/core';
 
-const createCamera = (scene: Scene, canvas: HTMLCanvasElement) => {
-  // eslint-disable-next-line max-len
-  // const camera = new ArcRotateCamera('camera1', -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 5, -10), scene);
-  // eslint-disable-next-line max-len
-  const camera = new FollowCamera('camera', new Vector3(-6, 0, -50), scene);
-  // camera.upperBetaLimit = Math.PI / 2.2;
-  camera.attachControl();
-  camera.radius = -10;
-  camera.upperRadiusLimit = 0;
-  camera.lowerRadiusLimit = -10;
-  camera.rotationOffset = 0;
+export class Camera {
+  scene: Scene;
+  canvas: HTMLCanvasElement;
+  camera: FollowCamera;
 
-  camera.heightOffset = 4;
-  camera.lowerHeightOffsetLimit = 1;
-  camera.upperHeightOffsetLimit = 5;
+  constructor(scene: Scene, canvas: HTMLCanvasElement) {
+    this.scene = scene;
+    this.canvas = canvas;
+    this.create();
+  }
 
-  // camera.cameraDirection = new Vector3(-20, 0, -20);
-  // camera.maxCameraSpeed = 2;
+  private create() {
+    // eslint-disable-next-line max-len
+    // const camera = new ArcRotateCamera('camera1', -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 5, -10), scene);
+    // eslint-disable-next-line max-len
+    const camera = new FollowCamera('camera', new Vector3(0, 0, -50), this.scene);
+    // camera.upperBetaLimit = Math.PI / 2.2;
+    camera.attachControl();
+    camera.radius = 10;
+    camera.upperRadiusLimit = 10;
+    camera.lowerRadiusLimit = 5;
+    camera.rotationOffset = 0;
 
-  return camera;
-};
+    camera.heightOffset = 4;
+    camera.lowerHeightOffsetLimit = 3;
+    camera.upperHeightOffsetLimit = 7;
 
-export default createCamera;
+    this.camera = camera;
+    // camera.cameraDirection = new Vector3(-20, 0, -20);
+    // camera.maxCameraSpeed = 2;
+  }
+
+  public getCamera() {
+    return this.camera;
+  }
+}

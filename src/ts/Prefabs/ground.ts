@@ -15,18 +15,26 @@ export class Ground {
     this.ground = this.create();
   }
 
+  private groundSize = {
+    width: 60,
+    height: 60,
+  }
+
   public create() {
     const groundMat = this.createGroundMaterialPBR();
 
-    const ground = MeshBuilder.CreateGround('ground', { width: 60, height: 60});
+    const ground = MeshBuilder.CreateGround('ground', { width: this.groundSize.width, height: this.groundSize.height });
     ground.material = groundMat;
     ground.receiveShadows = true;
-
     return ground;
   }
 
   public getGroundMesh() {
     return this.ground;
+  }
+
+  public getGroundSize() {
+    return this.groundSize;
   }
 
   private createGroundMaterial(): StandardMaterial {
@@ -85,7 +93,7 @@ export class Ground {
     pbr.useRoughnessFromMetallicTextureGreen = true;
     pbr.useMetallnessFromMetallicTextureBlue = true;
 
-    pbr.roughness = 1;
+    pbr.roughness = 0.8;
     pbr.specularIntensity = 5;
 
     return pbr;

@@ -4,6 +4,7 @@ import {
   MeshBuilder,
   PhysicsImpostor,
   Scene,
+  StandardMaterial,
   Vector3,
 } from '@babylonjs/core';
 import * as CANNON from 'cannon';
@@ -24,9 +25,12 @@ export class CustomPhysicsImpostor {
     
     this.ground.physicsImpostor = new PhysicsImpostor(this.ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0 });
 
-    const box = MeshBuilder.CreateBox('box', {}, this.scene);
-    box.position = new Vector3(-2, 10, 0);
-
-    box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0 });
+    // const box = MeshBuilder.CreateBox('box', { depth: 5, width: 3 }, this.scene);
+    // box.position = new Vector3(-4, 10, 0);
+    // box.checkCollisions = true;
+    // box.ellipsoid = new Vector3(1, 0, 1)
+    // box.ellipsoidOffset.y = -2;
+    // box.showBoundingBox = true
+    // box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass: 10, restitution: 4 });
   }
 }

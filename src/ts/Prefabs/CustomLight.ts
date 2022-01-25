@@ -1,4 +1,17 @@
-import { HemisphericLight, LightGizmo, Scene, Vector3, Light, GizmoManager, DirectionalLight, PointLight, Color3, SpotLight, Tools, ShadowGenerator } from '@babylonjs/core';
+import {
+  HemisphericLight,
+  LightGizmo,
+  Scene,
+  Vector3,
+  Light,
+  GizmoManager,
+  DirectionalLight,
+  PointLight, 
+  Color3,
+  SpotLight,
+  Tools,
+  ShadowGenerator
+} from '@babylonjs/core';
 
 export class CustomLight {
   scene: Scene;
@@ -23,8 +36,8 @@ export class CustomLight {
     const gizmoManager = new GizmoManager(this.scene);
     gizmoManager.positionGizmoEnabled = true;
     gizmoManager.rotationGizmoEnabled = true;
-    gizmoManager.usePointerToAttachGizmos = false;
-    gizmoManager.attachToMesh(lightGizmo.attachedMesh);
+    // gizmoManager.usePointerToAttachGizmos = false;
+    // gizmoManager.attachToMesh(lightGizmo.attachedMesh);
 
   }
 
