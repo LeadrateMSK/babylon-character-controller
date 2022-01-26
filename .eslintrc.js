@@ -10,10 +10,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
   ],
   parserOptions: {
-    project: [
-      resolve(__dirname, './tsconfig.json'),
-      resolve(__dirname, './tsconfig.eslint.json'),
-    ],
+    project: './tsconfig.json',
     ecmaVersion: 13,
     parser: '@typescript-eslint/parser',
     sourceType: 'module',

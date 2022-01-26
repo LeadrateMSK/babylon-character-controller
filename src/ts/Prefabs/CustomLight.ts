@@ -1,31 +1,21 @@
 import {
-  HemisphericLight,
   LightGizmo,
   Scene,
   Vector3,
   Light,
   GizmoManager,
-  DirectionalLight,
-  PointLight, 
+  PointLight,
   Color3,
   SpotLight,
   Tools,
-  ShadowGenerator
+  ShadowGenerator,
 } from '@babylonjs/core';
 
 export class CustomLight {
   scene: Scene;
+
   constructor(scene: Scene) {
     this.scene = scene;
-    this.create();
-  }
-
-  create() {
-    // const hemiLight = new HemisphericLight('heimLight', new Vector3(0, 1, 0), this.scene);
-    // hemiLight.intensity = 0.7;
-
-    // const directionalLight = new DirectionalLight('directionalLight', new Vector3(0, -1, 0), this.scene);
-
   }
 
   private createGizmos(customLight: Light) {
@@ -38,7 +28,6 @@ export class CustomLight {
     gizmoManager.rotationGizmoEnabled = true;
     // gizmoManager.usePointerToAttachGizmos = false;
     // gizmoManager.attachToMesh(lightGizmo.attachedMesh);
-
   }
 
   public createPointLight(): PointLight {
@@ -51,18 +40,18 @@ export class CustomLight {
   }
 
   public createSpotLight(): SpotLight {
-    const spotLight = new SpotLight('spotLight', new Vector3(-13, 2, 14.4), new Vector3(3, -0.5, -3), Tools.ToRadians(90), 10, this.scene);
+    const spotLight = new SpotLight('spotLight', new Vector3(-13, 2, 14.4), new Vector3(3, -0.5, -3), Tools.ToRadians(120), 10, this.scene);
     spotLight.intensity = 100;
     spotLight.shadowEnabled = true;
     spotLight.shadowMinZ = 1;
     spotLight.shadowMaxZ = 10;
 
-    this.createGizmos(spotLight)
+    this.createGizmos(spotLight);
 
     return spotLight;
   }
 
-  public createShadowGenerator(light: SpotLight): ShadowGenerator {
+  public static createShadowGenerator(light: SpotLight): ShadowGenerator {
     const shadowGenerator = new ShadowGenerator(1024, light);
 
     return shadowGenerator;

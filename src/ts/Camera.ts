@@ -1,5 +1,4 @@
 import {
-  ArcRotateCamera,
   FollowCamera,
   Scene,
   Vector3,
@@ -7,7 +6,9 @@ import {
 
 export class Camera {
   scene: Scene;
+
   canvas: HTMLCanvasElement;
+
   camera: FollowCamera;
 
   constructor(scene: Scene, canvas: HTMLCanvasElement) {

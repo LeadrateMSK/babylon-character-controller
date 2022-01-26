@@ -6,46 +6,65 @@ import {
 import { Camera } from './Camera';
 import { Ground } from './Prefabs/Ground';
 import { CustomLight } from './Prefabs/CustomLight';
-import { PlayerController } from './Prefabs/PlayerController';
+import { CharacterController } from './Prefabs/CharacterController';
 import { Skybox } from './Prefabs/Skybox';
 import { CustomModel } from './Prefabs/CustomModel';
 import { CustomPhysicsImpostor } from './Prefabs/CustomPhysicsImpostor';
 import { CustomGUI } from './GUI';
 
-function createScene(canvas: HTMLCanvasElement) {
-  const engine = new Engine(canvas);
-  const scene = new Scene(engine);
-  scene.collisionsEnabled = true;
+class App {
+  canvas: HTMLCanvasElement;
 
-  const camera = new Camera(scene, canvas);
-  const followCamera = camera.getCamera();
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.init();
+  }
 
-  const light = new CustomLight(scene);
-  const pointLight = light.createPointLight();
-  const spotLight = light.createSpotLight();
-  const shadowGenerator = light.createShadowGenerator(spotLight);
+  init() {
+    const engine = new Engine(this.canvas);
+    const scene = new Scene(engine);
+    scene.collisionsEnabled = true;
 
-  const skybox = new Skybox(scene);
+    const camera = new Camera(scene, this.canvas);
+    const followCamera = camera.getCamera();
 
-  const ground = new Ground(scene);
-  const groundMesh = ground.getGroundMesh();
-  const groundSize = ground.getGroundSize();
+    const light = new CustomLight(scene);
+    const pointLight = light.createPointLight();
+    const spotLight = light.createSpotLight();
+    const shadowGenerator = CustomLight.createShadowGenerator(spotLight);
 
-  const physicsimpostor = new CustomPhysicsImpostor(scene, groundMesh);
+    const skybox = new Skybox(scene);
 
-  const player = new PlayerController(scene, followCamera, engine, shadowGenerator, groundSize);
+    const ground = new Ground(scene);
+    const groundMesh = ground.getGroundMesh();
+    const groundSize = ground.getGroundSize();
 
-  const customModel = new CustomModel(scene, shadowGenerator, pointLight);
+    const physicsimpostor = new CustomPhysicsImpostor(scene, groundMesh);
 
-  new CustomGUI(scene);
+    const characterController = new CharacterController(
+      scene,
+      followCamera,
+      engine,
+      shadowGenerator,
+      groundSize,
+    );
 
-  engine.runRenderLoop(() => {
-    scene.render();
-  });
+    const customModel = new CustomModel(scene, shadowGenerator, pointLight);
+
+    const GUI = new CustomGUI(scene, engine);
+
+    engine.runRenderLoop(() => {
+      scene.render();
+    });
+
+    window.addEventListener('resize', () => {
+      engine.resize();
+    });
+  }
 }
 
 window.onload = () => {
   const renderCanvas = <HTMLCanvasElement> document.getElementById('canvas');
 
-  createScene(renderCanvas);
+  const app = new App(renderCanvas);
 };
