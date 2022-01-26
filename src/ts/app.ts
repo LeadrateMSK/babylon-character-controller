@@ -1,4 +1,5 @@
 import {
+  AnimationPropertiesOverride,
   Engine,
   Scene,
 } from '@babylonjs/core';
@@ -15,6 +16,8 @@ import { CustomGUI } from './GUI';
 class App {
   canvas: HTMLCanvasElement;
 
+  scene: Scene;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.init();
@@ -23,6 +26,7 @@ class App {
   init() {
     const engine = new Engine(this.canvas);
     const scene = new Scene(engine);
+    this.scene = scene;
     scene.collisionsEnabled = true;
 
     const camera = new Camera(scene, this.canvas);
@@ -53,6 +57,8 @@ class App {
 
     const GUI = new CustomGUI(scene, engine);
 
+    this.setSceneAnimationsBlending();
+
     engine.runRenderLoop(() => {
       scene.render();
     });
@@ -60,6 +66,13 @@ class App {
     window.addEventListener('resize', () => {
       engine.resize();
     });
+  }
+
+  private setSceneAnimationsBlending() {
+    this.scene.animationPropertiesOverride = new AnimationPropertiesOverride();
+    this.scene.animationPropertiesOverride.enableBlending = true;
+    this.scene.animationPropertiesOverride.blendingSpeed = 0.1;
+    this.scene.animationPropertiesOverride.loopMode = 1;
   }
 }
 
