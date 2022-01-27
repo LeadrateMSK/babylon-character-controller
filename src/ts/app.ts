@@ -12,6 +12,7 @@ import { Skybox } from './Prefabs/Skybox';
 import { CustomModel } from './Prefabs/CustomModel';
 import { CustomPhysicsImpostor } from './Prefabs/CustomPhysicsImpostor';
 import { CustomGUI } from './GUI';
+import { AudioController } from './Prefabs/AudioController';
 
 class App {
   canvas: HTMLCanvasElement;
@@ -30,6 +31,7 @@ class App {
     scene.collisionsEnabled = true;
 
     const GUI = new CustomGUI(scene, engine);
+    const audioController = new AudioController(this.scene);
 
     const ground = new Ground(scene);
     const groundMesh = ground.getGroundMesh();
@@ -40,6 +42,7 @@ class App {
       engine,
       groundSize,
       GUI,
+      audioController,
     );
     await characterController.create();
 

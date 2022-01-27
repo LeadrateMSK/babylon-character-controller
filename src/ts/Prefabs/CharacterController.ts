@@ -11,13 +11,21 @@ import {
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
 import { CustomGUI } from '../GUI';
+import { AudioController } from './AudioController';
 
 export class CharacterController {
-  constructor(scene: Scene, engine: Engine, groundSize: { width: number, height: number }, GUI: CustomGUI) {
+  constructor(
+    scene: Scene,
+    engine: Engine,
+    groundSize: { width: number, height: number },
+    GUI: CustomGUI,
+    audioController: AudioController,
+  ) {
     this.scene = scene;
     this.engine = engine;
     this.groundSize = groundSize;
     this.GUI = GUI;
+    this.audioController = audioController;
   }
 
   scene: Scene;
@@ -25,6 +33,8 @@ export class CharacterController {
   engine: Engine;
 
   GUI: CustomGUI;
+
+  audioController: AudioController;
 
   private groundSize: { width: number, height: number };
 
@@ -76,6 +86,7 @@ export class CharacterController {
           mesh.dispose();
           this.score += 1;
           this.GUI.updateScore(this.score);
+          this.audioController.playSuccess();
         }
       };
 
