@@ -14,7 +14,7 @@ export class Skybox {
   create() {
     const envTexture = CubeTexture.CreateFromPrefilteredData('../../assets/textures/skyboxes/sky.env', this.scene);
     this.scene.environmentTexture = envTexture;
-    this.scene.createDefaultSkybox(envTexture, true);
+    this.scene.createDefaultSkybox(envTexture, true, 1000, 0.05);
     this.scene.environmentIntensity = 0.5;
   }
 }

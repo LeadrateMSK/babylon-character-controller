@@ -2,18 +2,25 @@ import { Engine, Scene } from '@babylonjs/core';
 import * as GUI from 'babylonjs-gui';
 
 export class CustomGUI {
+  constructor(scene: Scene, engine: Engine) {
+    // eslint-disable-next-line no-constructor-return
+    if (this.isExists) return this;
+    this.scene = scene;
+    this.engine = engine;
+    this.create();
+    this.showFps();
+    this.showScore();
+  }
+
   scene: Scene;
 
   engine: Engine;
 
   advancedTexture: GUI.AdvancedDynamicTexture;
 
-  constructor(scene: Scene, engine: Engine) {
-    this.scene = scene;
-    this.engine = engine;
-    this.create();
-    this.showFps();
-  }
+  isExists = false;
+
+  scoreText: GUI.TextBlock;
 
   private create() {
     const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI', true, this.scene);
@@ -49,5 +56,26 @@ export class CustomGUI {
       const frameRate = this.engine.getFps().toFixed();
       fps.text = `${frameRate} fps`;
     });
+  }
+
+  private showScore() {
+    const scoreText = new GUI.TextBlock();
+    scoreText.color = 'white';
+    scoreText.fontSize = 20;
+    scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+    scoreText.paddingTopInPixels = 30;
+    scoreText.paddingLeftInPixels = 30;
+    scoreText.outlineColor = 'black';
+    scoreText.outlineWidth = 4;
+    this.advancedTexture.addControl(scoreText);
+
+    scoreText.text = 'Collected treasures: 0';
+
+    this.scoreText = scoreText;
+  }
+
+  public updateScore(score: number) {
+    this.scoreText.text = `Collected treasures: ${score}`;
   }
 }

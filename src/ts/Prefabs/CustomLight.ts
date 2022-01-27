@@ -9,6 +9,7 @@ import {
   SpotLight,
   Tools,
   ShadowGenerator,
+  AbstractMesh,
 } from '@babylonjs/core';
 
 export class CustomLight {
@@ -51,8 +52,9 @@ export class CustomLight {
     return spotLight;
   }
 
-  public static createShadowGenerator(light: SpotLight): ShadowGenerator {
+  public static createShadowGenerator(light: SpotLight, target: AbstractMesh): ShadowGenerator {
     const shadowGenerator = new ShadowGenerator(1024, light);
+    shadowGenerator.addShadowCaster(target);
 
     return shadowGenerator;
   }

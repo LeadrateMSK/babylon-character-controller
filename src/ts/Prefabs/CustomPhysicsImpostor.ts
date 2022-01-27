@@ -4,6 +4,7 @@ import {
   MeshBuilder,
   PhysicsImpostor,
   Scene,
+  SceneLoader,
   Vector3,
 } from '@babylonjs/core';
 import * as CANNON from 'cannon';
@@ -39,5 +40,28 @@ export class CustomPhysicsImpostor {
       PhysicsImpostor.BoxImpostor,
       { mass: 10, restitution: 1 },
     );
+  }
+
+  async createRocket(): Promise<void> {
+    const { meshes } = await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'rocket.glb', this.scene);
+
+    const rocketCollider = MeshBuilder.CreateBox('rocketCollider', { width: 1, height: 1.7, depth: 1 });
+    rocketCollider.visibility = 0.05;
+    rocketCollider.position.y = 0.85;
+    rocketCollider.physicsImpostor = new PhysicsImpostor(
+      rocketCollider,
+      PhysicsImpostor.BoxImpostor,
+      { mass: 1 },
+    );
+
+    meshes[0].setParent(rocketCollider);
+    rocketCollider.position = new Vector3(2, 0, 20);
+
+    // const rocketPhysics = () => {
+    //   rocketCollider.physicsImpostor.setLinearVelocity(new Vector3(0, 1, 0));
+    //   rocketCollider.physicsImpostor.setAngularVelocity(new Vector3(0, 1, 0));
+    // };
+
+    // this.scene.registerBeforeRender(rocketPhysics);
   }
 }

@@ -3,38 +3,32 @@ import {
   AbstractMesh,
   AnimationGroup,
   Engine,
-  FollowCamera,
   KeyboardEventTypes,
   Ray,
-  RayHelper,
   Scene,
   SceneLoader,
-  ShadowGenerator,
   Vector3,
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
+import { CustomGUI } from '../GUI';
 
 export class CharacterController {
-  scene: Scene;
+  constructor(scene: Scene, engine: Engine, groundSize: { width: number, height: number }, GUI: CustomGUI) {
+    this.scene = scene;
+    this.engine = engine;
+    this.groundSize = groundSize;
+    this.GUI = GUI;
+  }
 
-  camera: FollowCamera;
+  scene: Scene;
 
   engine: Engine;
 
-  shadowGenerator: ShadowGenerator;
+  GUI: CustomGUI;
 
-  groundSize: { width: number, height: number };
+  private groundSize: { width: number, height: number };
 
-  constructor(scene: Scene, camera: FollowCamera, engine: Engine, shadowGenerator: ShadowGenerator, groundSize: { width: number, height: number }) {
-    this.scene = scene;
-    this.camera = camera;
-    this.engine = engine;
-    this.shadowGenerator = shadowGenerator;
-    this.groundSize = groundSize;
-    this.create();
-  }
-
-  private maxJumpHeight = 1.5;
+  private maxJumpHeight = 2;
 
   private jumpHeight = 0;
 
@@ -64,24 +58,34 @@ export class CharacterController {
 
   private walkBackAnim: AnimationGroup;
 
-  public create() {
-    SceneLoader.ImportMeshAsync('', '../../assets/models/', 'bot.glb', this.scene).then((result) => {
+  private score = 0;
+
+  public async create() {
+    await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'character.glb', this.scene).then((result) => {
       const character = result.meshes[0];
+      character.rotationQuaternion = null;
+      character.scaling = new Vector3(0.5, 0.5, 0.5);
       character.checkCollisions = true;
       character.ellipsoid = new Vector3(0.5, 1, 0.5);
       character.ellipsoidOffset = new Vector3(0, 1, 0);
-      // character.physicsImpostor = new PhysicsImpostor(character, PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0 });
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      character.onCollide = (mesh: AbstractMesh) => {
+        if (mesh.name.includes('brass_vase_01')) {
+          mesh.dispose();
+          this.score += 1;
+          this.GUI.updateScore(this.score);
+        }
+      };
+
+      this.character = character;
 
       this.idleAnim = this.scene.getAnimationGroupByName('Idle');
       this.runAnim = this.scene.getAnimationGroupByName('Run');
       this.walkAnim = this.scene.getAnimationGroupByName('Walk');
       this.jumpAnim = this.scene.getAnimationGroupByName('Jump');
       this.walkBackAnim = this.scene.getAnimationGroupByName('Walk_Back');
-
-      this.shadowGenerator.addShadowCaster(character);
-
-      this.camera.lockedTarget = character;
-      this.character = character;
 
       this.idle();
 
@@ -125,9 +129,9 @@ export class CharacterController {
   private processMoving() {
     const { character, inputs } = this;
     const deltaTime = this.engine.getDeltaTime();
-    const speed = 0.002 * deltaTime;
-    const backwardSpeed = 0.0015 * deltaTime;
-    const runningSpeed = 0.006 * deltaTime;
+    const speed = 0.0018 * deltaTime;
+    const backwardSpeed = 0.0005 * deltaTime;
+    const runningSpeed = 0.0055 * deltaTime;
     const rotationSpeed = 0.0015 * deltaTime;
     const isRunning: boolean = inputs.ShiftLeft;
     let isKeyDown = false;
@@ -201,8 +205,8 @@ export class CharacterController {
 
   private processJump() {
     const deltaTime = this.engine.getDeltaTime();
-    const jumpForce = 0.007 * deltaTime;
-    const fallingForce = 0.008 * deltaTime;
+    const jumpForce = 0.004 * deltaTime;
+    const fallingForce = 0.0045 * deltaTime;
 
     if (this.isJumped) {
       if (this.jumpHeight < this.maxJumpHeight) {
@@ -223,7 +227,7 @@ export class CharacterController {
 
   public run() {
     this.stopAnims();
-    this.runAnim.start(true, 1.0, this.runAnim.from, this.runAnim.to, false);
+    this.runAnim.start(true, 1.2, this.runAnim.from, this.runAnim.to, false);
   }
 
   public idle() {
@@ -239,8 +243,8 @@ export class CharacterController {
   public jump() {
     this.stopAnims();
     // Variable to hide animtaion jump delay
-    const jumpAnimFrom = 0.75;
-    this.jumpAnim.start(false, 1.0, jumpAnimFrom, this.jumpAnim.to, false);
+    const jumpAnimFrom = 0.35;
+    this.jumpAnim.start(false, 1.2, jumpAnimFrom, this.jumpAnim.to, false);
   }
 
   public walkBackward() {
@@ -258,5 +262,9 @@ export class CharacterController {
 
   public getCharacter() {
     return this.character;
+  }
+
+  public getScore() {
+    return this.score;
   }
 }

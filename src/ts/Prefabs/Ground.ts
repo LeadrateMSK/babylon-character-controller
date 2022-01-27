@@ -178,12 +178,12 @@ export class Ground {
   }
 
   private addGrass() {
-    const spriteManagerGrass = new SpriteManager('grassManager', '../../assets/textures/grass.png', 10000, { width: 640, height: 583 }, this.scene);
+    const spriteManagerGrass = new SpriteManager('grassManager', '../../assets/textures/grass.png', 7000, { width: 640, height: 583 }, this.scene);
 
-    for (let i = 0; i < 10000; i += 1) {
+    for (let i = 0; i < 7000; i += 1) {
       const grass = new Sprite('grass', spriteManagerGrass);
       grass.width = 0.7;
-      grass.height = 0.6;
+      grass.height = 0.5;
       grass.position.x = Scalar.RandomRange(
         -(this.groundSize.width / 2),
         this.groundSize.width / 2,

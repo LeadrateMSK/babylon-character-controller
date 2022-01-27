@@ -1,9 +1,12 @@
 import {
   AbstractMesh,
+  Matrix,
+  Mesh,
+  NodeMaterial,
   PointLight,
+  Scalar,
   Scene,
   SceneLoader,
-  ShadowGenerator,
   Tools,
   Vector3,
 } from '@babylonjs/core';
@@ -11,21 +14,19 @@ import {
 export class CustomModel {
   scene: Scene;
 
-  models: AbstractMesh[] = [];
-
-  shadowGenerator: ShadowGenerator;
+  models: { [index: string]: AbstractMesh[] } = {};
 
   pointLight: PointLight;
 
-  constructor(scene: Scene, shadowGenerator: ShadowGenerator, pointLight: PointLight) {
+  constructor(scene: Scene, pointLight: PointLight) {
     this.scene = scene;
-    this.shadowGenerator = shadowGenerator;
     this.pointLight = pointLight;
     this.create();
   }
 
   create() {
     this.createSceneModels();
+    this.createTreasures();
   }
 
   createSceneModels() {
@@ -38,7 +39,6 @@ export class CustomModel {
 
       barrel.position = new Vector3(-6, 0, 14);
       barrel.receiveShadows = true;
-      this.shadowGenerator.addShadowCaster(barrel);
     });
 
     SceneLoader.ImportMesh('', '../../assets/models/', 'campfire.glb', this.scene, (meshes) => {
@@ -54,7 +54,6 @@ export class CustomModel {
       campfire.receiveShadows = true;
       campfire.checkCollisions = true;
       campfire.showBoundingBox = true;
-      this.shadowGenerator.addShadowCaster(campfire);
     });
 
     SceneLoader.ImportMesh('', '../../assets/models/', 'tree.glb', this.scene, (meshes) => {
@@ -68,7 +67,6 @@ export class CustomModel {
       tree.receiveShadows = true;
       tree.checkCollisions = true;
       tree.showBoundingBox = true;
-      this.shadowGenerator.addShadowCaster(tree);
 
       const treesPos = [
         new Vector3(-1, 0, 0.5),
@@ -105,7 +103,6 @@ export class CustomModel {
 
     SceneLoader.ImportMesh('', '../../assets/models/', 'house.glb', this.scene, (meshes) => {
       const blacksmith = meshes[0];
-
       meshes.forEach((mesh) => {
         mesh.checkCollisions = true;
       });
@@ -113,6 +110,27 @@ export class CustomModel {
       blacksmith.scaling = new Vector3(0.1, 0.1, 0.1);
       blacksmith.position = new Vector3(-22, 0, 11);
       blacksmith.rotation = new Vector3(0, Tools.ToRadians(130), 0);
+    });
+  }
+
+  private createTreasures() {
+    const treasureCounter = 20;
+
+    SceneLoader.ImportMesh('', '../../assets/models/', 'treasure.glb', this.scene, (meshes) => {
+      const treasure = meshes[0];
+      meshes.forEach((mesh) => {
+        mesh.checkCollisions = true;
+      });
+
+      treasure.scaling = new Vector3(1.5, 1.5, 1.5);
+      treasure.position = new Vector3(-1, 0, 5);
+
+      for (let i = 0; i < treasureCounter; i += 1) {
+        const newTreasure = (treasure as Mesh).clone(`${treasure.name}${i}`);
+
+        newTreasure.position.x = Scalar.RandomRange(-10, 20);
+        newTreasure.position.z = Scalar.RandomRange(-20, 10);
+      }
     });
   }
 }

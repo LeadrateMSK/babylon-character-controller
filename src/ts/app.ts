@@ -23,39 +23,43 @@ class App {
     this.init();
   }
 
-  init() {
+  async init() {
     const engine = new Engine(this.canvas);
     const scene = new Scene(engine);
     this.scene = scene;
     scene.collisionsEnabled = true;
 
-    const camera = new Camera(scene, this.canvas);
-    const followCamera = camera.getCamera();
-
-    const light = new CustomLight(scene);
-    const pointLight = light.createPointLight();
-    const spotLight = light.createSpotLight();
-    const shadowGenerator = CustomLight.createShadowGenerator(spotLight);
-
-    const skybox = new Skybox(scene);
+    const GUI = new CustomGUI(scene, engine);
 
     const ground = new Ground(scene);
     const groundMesh = ground.getGroundMesh();
     const groundSize = ground.getGroundSize();
 
-    const physicsimpostor = new CustomPhysicsImpostor(scene, groundMesh);
-
     const characterController = new CharacterController(
       scene,
-      followCamera,
       engine,
-      shadowGenerator,
       groundSize,
+      GUI,
     );
+    await characterController.create();
 
-    const customModel = new CustomModel(scene, shadowGenerator, pointLight);
+    const character = characterController.getCharacter();
 
-    const GUI = new CustomGUI(scene, engine);
+    const physicsimpostor = new CustomPhysicsImpostor(scene, groundMesh);
+
+    const camera = new Camera(scene, this.canvas);
+
+    camera.createFollowCamera(character);
+
+    const light = new CustomLight(scene);
+    const pointLight = light.createPointLight();
+    const spotLight = light.createSpotLight();
+
+    CustomLight.createShadowGenerator(spotLight, character);
+
+    const skybox = new Skybox(scene);
+
+    const customModel = new CustomModel(scene, pointLight);
 
     this.setSceneAnimationsBlending();
 
@@ -71,7 +75,7 @@ class App {
   private setSceneAnimationsBlending() {
     this.scene.animationPropertiesOverride = new AnimationPropertiesOverride();
     this.scene.animationPropertiesOverride.enableBlending = true;
-    this.scene.animationPropertiesOverride.blendingSpeed = 0.1;
+    this.scene.animationPropertiesOverride.blendingSpeed = 0.2;
     this.scene.animationPropertiesOverride.loopMode = 1;
   }
 }
