@@ -29,6 +29,7 @@ class App {
     const scene = new Scene(engine);
     this.scene = scene;
     scene.collisionsEnabled = true;
+    const camera = new Camera(scene, this.canvas);
 
     const GUI = new CustomGUI(scene, engine);
     const audioController = new AudioController(this.scene);
@@ -49,8 +50,6 @@ class App {
     const character = characterController.getCharacter();
 
     const physicsimpostor = new CustomPhysicsImpostor(scene, groundMesh);
-
-    const camera = new Camera(scene, this.canvas);
 
     camera.createFollowCamera(character);
 

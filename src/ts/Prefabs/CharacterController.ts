@@ -38,7 +38,7 @@ export class CharacterController {
 
   private groundSize: { width: number, height: number };
 
-  private maxJumpHeight = 2;
+  private maxJumpHeight = 2.2;
 
   private jumpHeight = 0;
 
@@ -169,10 +169,39 @@ export class CharacterController {
 
     if (inputs.KeyA) {
       isKeyDown = true;
-      character.rotate(Vector3.Up(), -rotationSpeed);
-    } else if (this.inputs.KeyD) {
+
+      // if S pressed rotate in opposite direction
+      if (inputs.KeyS) {
+        character.rotate(Vector3.Up(), rotationSpeed);
+      } else {
+        character.rotate(Vector3.Up(), -rotationSpeed);
+      }
+
+      // if only one keyA pressed
+      if (!inputs.KeyW && !inputs.KeyS) {
+        if (isRunning) {
+          character.moveWithCollisions(character.forward.scaleInPlace(runningSpeed));
+        } else {
+          character.moveWithCollisions(character.forward.scaleInPlace(speed));
+        }
+      }
+    } else if (inputs.KeyD) {
       isKeyDown = true;
-      character.rotate(Vector3.Up(), rotationSpeed);
+      // if S pressed rotate in opposite direction
+      if (inputs.KeyS) {
+        character.rotate(Vector3.Up(), -rotationSpeed);
+      } else {
+        character.rotate(Vector3.Up(), rotationSpeed);
+      }
+
+      // if only one keyS pressed
+      if (!inputs.KeyW && !inputs.KeyS) {
+        if (isRunning) {
+          character.moveWithCollisions(character.forward.scaleInPlace(runningSpeed));
+        } else {
+          character.moveWithCollisions(character.forward.scaleInPlace(speed));
+        }
+      }
     }
 
     if (this.isGrounded) {
@@ -182,7 +211,7 @@ export class CharacterController {
           this.isJumped = true;
           this.isRunningAnimated = false;
           this.isWalkingAnimated = false;
-        } else if (inputs.KeyW && isRunning) {
+        } else if ((inputs.KeyW || inputs.KeyD || inputs.KeyA) && isRunning && !this.isWalkingBackAnimated) {
           if (!this.isRunningAnimated) {
             this.run();
             this.isRunningAnimated = true;
@@ -254,8 +283,8 @@ export class CharacterController {
   public jump() {
     this.stopAnims();
     // Variable to hide animtaion jump delay
-    const jumpAnimFrom = 0.35;
-    this.jumpAnim.start(false, 1.2, jumpAnimFrom, this.jumpAnim.to, false);
+    const jumpAnimFrom = 0.45;
+    this.jumpAnim.start(false, 1.0, jumpAnimFrom, this.jumpAnim.to, false);
   }
 
   public walkBackward() {
