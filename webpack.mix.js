@@ -22,7 +22,7 @@ mix.options({
     processCssUrls: false,
 });
 
-mix.ts('src/ts/app.ts', 'js')
+mix.ts('src/ts/App.ts', 'js')
     .sass('src/styles/app.scss', 'css')
     .sourceMaps()
     .copyDirectory('src/*.html', 'dist')

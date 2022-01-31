@@ -7,6 +7,7 @@ import {
   Ray,
   Scene,
   SceneLoader,
+  Tools,
   Vector3,
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
@@ -74,6 +75,7 @@ export class CharacterController {
     await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'character.glb', this.scene).then((result) => {
       const character = result.meshes[0];
       character.rotationQuaternion = null;
+      character.rotation = new Vector3(0, Tools.ToRadians(-40), 0);
       character.scaling = new Vector3(0.5, 0.5, 0.5);
       character.checkCollisions = true;
       character.ellipsoid = new Vector3(0.5, 1, 0.5);
@@ -141,7 +143,7 @@ export class CharacterController {
     const { character, inputs } = this;
     const deltaTime = this.engine.getDeltaTime();
     const speed = 0.0018 * deltaTime;
-    const backwardSpeed = 0.0005 * deltaTime;
+    const backwardSpeed = 0.0008 * deltaTime;
     const runningSpeed = 0.0055 * deltaTime;
     const rotationSpeed = 0.0015 * deltaTime;
     const isRunning: boolean = inputs.ShiftLeft;
@@ -171,7 +173,7 @@ export class CharacterController {
       isKeyDown = true;
 
       // if S pressed rotate in opposite direction
-      if (inputs.KeyS) {
+      if (inputs.KeyS && !inputs.KeyW) {
         character.rotate(Vector3.Up(), rotationSpeed);
       } else {
         character.rotate(Vector3.Up(), -rotationSpeed);
@@ -184,11 +186,13 @@ export class CharacterController {
         } else {
           character.moveWithCollisions(character.forward.scaleInPlace(speed));
         }
+      } else if (inputs.KeyS) {
+        character.moveWithCollisions(character.forward.scaleInPlace(-backwardSpeed));
       }
     } else if (inputs.KeyD) {
       isKeyDown = true;
       // if S pressed rotate in opposite direction
-      if (inputs.KeyS) {
+      if (inputs.KeyS && !inputs.KeyW) {
         character.rotate(Vector3.Up(), -rotationSpeed);
       } else {
         character.rotate(Vector3.Up(), rotationSpeed);
@@ -201,6 +205,8 @@ export class CharacterController {
         } else {
           character.moveWithCollisions(character.forward.scaleInPlace(speed));
         }
+      } else if (inputs.KeyS) {
+        character.moveWithCollisions(character.forward.scaleInPlace(-backwardSpeed));
       }
     }
 
@@ -223,9 +229,13 @@ export class CharacterController {
           this.isWalkingBackAnimated = false;
           this.isRunningAnimated = false;
           this.isWalkingAnimated = true;
-        } else if (inputs.KeyS && !this.isWalkingBackAnimated && !this.isWalkingAnimated) {
+        } else if (
+          (inputs.KeyS && !this.isWalkingBackAnimated && !this.isWalkingAnimated && !inputs.KeyW)
+          || (inputs.KeyS && (inputs.KeyA || inputs.KeyD) && !this.isWalkingBackAnimated && !inputs.KeyW)
+        ) {
           this.walkBackward();
           this.isRunningAnimated = false;
+          this.isWalkingAnimated = false;
           this.isWalkingBackAnimated = true;
         } else if (!this.isWalkingAnimated && !this.isWalkingBackAnimated) {
           // case to animate rotations
@@ -267,17 +277,17 @@ export class CharacterController {
 
   public run() {
     this.stopAnims();
-    this.runAnim.start(true, 1.2, this.runAnim.from, this.runAnim.to, false);
+    this.runAnim.start(true, 1.3, this.runAnim.from, this.runAnim.to, false);
   }
 
   public idle() {
     this.stopAnims();
-    this.idleAnim.start(true, 1.0, this.idleAnim.from, this.idleAnim.to, false);
+    this.idleAnim.start(true, 1.2, this.idleAnim.from, this.idleAnim.to, false);
   }
 
   public walkForward() {
     this.stopAnims();
-    this.walkAnim.start(true, 1.0, this.walkAnim.from, this.walkAnim.to, false);
+    this.walkAnim.start(true, 1.4, this.walkAnim.from, this.walkAnim.to, false);
   }
 
   public jump() {
@@ -289,7 +299,7 @@ export class CharacterController {
 
   public walkBackward() {
     this.stopAnims();
-    this.walkBackAnim.start(true, 1.0, this.walkBackAnim.from, this.walkBackAnim.to, false);
+    this.walkBackAnim.start(true, 1.4, this.walkBackAnim.from, this.walkBackAnim.to, false);
   }
 
   private stopAnims() {

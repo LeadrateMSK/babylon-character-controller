@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx mix watch",
     "prod": "npx mix --production",
-    "build": "npx mix"
+    "build": "npx mix",
+    "lint": "npx eslint --fix ."
   },
   "repository": {
     "type": "git",

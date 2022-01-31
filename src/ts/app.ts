@@ -48,10 +48,9 @@ class App {
     await characterController.create();
 
     const character = characterController.getCharacter();
+    camera.createFollowCamera(character);
 
     const physicsimpostor = new CustomPhysicsImpostor(scene, groundMesh);
-
-    camera.createFollowCamera(character);
 
     const light = new CustomLight(scene);
     const pointLight = light.createPointLight();
