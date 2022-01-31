@@ -1,7 +1,6 @@
 import {
   AbstractMesh,
   FollowCamera,
-  FollowCameraMouseWheelInput,
   Scene,
   Vector3,
 } from '@babylonjs/core';
@@ -33,8 +32,6 @@ export class Camera {
 
     camera.invertRotation = true;
     camera.lockedTarget = target;
-    const inputManager = camera.inputs;
-    inputManager.add(new FollowCameraMouseWheelInput());
 
     this.camera = camera;
   }

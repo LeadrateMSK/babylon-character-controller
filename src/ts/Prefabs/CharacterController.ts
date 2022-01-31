@@ -4,6 +4,8 @@ import {
   AnimationGroup,
   Engine,
   KeyboardEventTypes,
+  KeyboardInfo,
+  Observer,
   Ray,
   Scene,
   SceneLoader,
@@ -71,6 +73,8 @@ export class CharacterController {
 
   private score = 0;
 
+  private inputObserver: Observer<KeyboardInfo>;
+
   public async create() {
     await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'character.glb', this.scene).then((result) => {
       const character = result.meshes[0];
@@ -89,6 +93,11 @@ export class CharacterController {
           this.score += 1;
           this.GUI.updateScore(this.score);
           this.audioController.playSuccess();
+
+          if (this.score >= 20) { // depends on vases
+            this.GUI.showVictory();
+            this.removeInputListeners();
+          }
         }
       };
 
@@ -115,18 +124,25 @@ export class CharacterController {
   }
 
   private addInputListeners() {
-    this.scene.onKeyboardObservable.add((kbInfo) => {
-      switch (kbInfo.type) {
-        case KeyboardEventTypes.KEYDOWN:
-          this.inputs[kbInfo.event.code] = true;
-          break;
-        case KeyboardEventTypes.KEYUP:
-          this.inputs[kbInfo.event.code] = false;
-          break;
-        default:
-          break;
-      }
-    });
+    this.inputObserver = this.scene.onKeyboardObservable.add((kbInfo) => this.handleCharacterInputs(kbInfo));
+  }
+
+  private removeInputListeners() {
+    this.inputs = {};
+    this.scene.onKeyboardObservable.remove(this.inputObserver);
+  }
+
+  private handleCharacterInputs(kbInfo: KeyboardInfo) {
+    switch (kbInfo.type) {
+      case KeyboardEventTypes.KEYDOWN:
+        this.inputs[kbInfo.event.code] = true;
+        break;
+      case KeyboardEventTypes.KEYUP:
+        this.inputs[kbInfo.event.code] = false;
+        break;
+      default:
+        break;
+    }
   }
 
   private setIsGrounded() {

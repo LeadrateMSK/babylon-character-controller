@@ -114,7 +114,7 @@ export class CustomModel {
   }
 
   private createTreasures() {
-    const treasureCounter = 20;
+    const treasureCounter = 19;
 
     SceneLoader.ImportMesh('', '../../assets/models/', 'treasure.glb', this.scene, (meshes) => {
       const treasure = meshes[0];

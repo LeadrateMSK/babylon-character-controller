@@ -11,17 +11,21 @@ import {
   Tools,
   Vector3,
 } from '@babylonjs/core';
+import { CustomLoading } from './CustomLoading';
 
 export class Ground {
+  constructor(scene: Scene, customLoading: CustomLoading) {
+    this.scene = scene;
+    this.customLoading = customLoading;
+    this.create();
+    this.createBorders();
+  }
+
   scene: Scene;
 
   ground: Mesh;
 
-  constructor(scene: Scene) {
-    this.scene = scene;
-    this.ground = this.create();
-    this.createBorders();
-  }
+  customLoading: CustomLoading;
 
   private groundSize = {
     width: 56,
@@ -33,9 +37,13 @@ export class Ground {
 
     const ground = MeshBuilder.CreateGround('ground', { width: this.groundSize.width, height: this.groundSize.height });
     ground.material = groundMat;
+
     ground.receiveShadows = true;
+    ground.onAfterRenderObservable.addOnce(() => this.customLoading.hideLoading());
+
     this.addGrass();
-    return ground;
+
+    this.ground = ground;
   }
 
   public getGroundMesh() {

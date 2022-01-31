@@ -13,28 +13,36 @@ import { CustomModel } from './Prefabs/CustomModel';
 import { CustomPhysicsImpostor } from './Prefabs/CustomPhysicsImpostor';
 import { CustomGUI } from './GUI';
 import { AudioController } from './Prefabs/AudioController';
+import { CustomLoading } from './Prefabs/CustomLoading';
 
 class App {
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.create();
+  }
+
   canvas: HTMLCanvasElement;
 
   scene: Scene;
 
-  constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
-    this.init();
-  }
+  customLoading: CustomLoading;
 
-  async init() {
+  async create() {
     const engine = new Engine(this.canvas);
+
+    this.createLoading(engine);
+    this.customLoading.displayLoading();
+
     const scene = new Scene(engine);
     this.scene = scene;
     scene.collisionsEnabled = true;
+
     const camera = new Camera(scene, this.canvas);
 
     const GUI = new CustomGUI(scene, engine);
     const audioController = new AudioController(this.scene);
 
-    const ground = new Ground(scene);
+    const ground = new Ground(scene, this.customLoading);
     const groundMesh = ground.getGroundMesh();
     const groundSize = ground.getGroundSize();
 
@@ -78,6 +86,14 @@ class App {
     this.scene.animationPropertiesOverride.enableBlending = true;
     this.scene.animationPropertiesOverride.blendingSpeed = 0.2;
     this.scene.animationPropertiesOverride.loopMode = 1;
+  }
+
+  private createLoading(engine: Engine) {
+    const loader = document.getElementById('loader') as HTMLElement;
+
+    const customLoading = new CustomLoading(engine, loader);
+
+    this.customLoading = customLoading;
   }
 }
 

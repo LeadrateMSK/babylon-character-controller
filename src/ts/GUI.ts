@@ -75,6 +75,21 @@ export class CustomGUI {
     this.scoreText = scoreText;
   }
 
+  public showVictory() {
+    const scoreText = new GUI.TextBlock();
+    scoreText.color = 'white';
+    scoreText.fontSize = 40;
+    scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    scoreText.outlineColor = 'black';
+    scoreText.outlineWidth = 15;
+    this.advancedTexture.addControl(scoreText);
+
+    scoreText.text = 'Congrats! You have all treasures!';
+
+    this.scoreText = scoreText;
+  }
+
   public updateScore(score: number) {
     this.scoreText.text = `Collected treasures: ${score}`;
   }
