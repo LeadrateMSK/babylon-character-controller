@@ -8,7 +8,6 @@ import {
   SpriteManager,
   StandardMaterial,
   Texture,
-  Tools,
   Vector3,
 } from '@babylonjs/core';
 import { CustomLoading } from './CustomLoading';
@@ -27,6 +26,8 @@ export class Ground {
 
   customLoading: CustomLoading;
 
+  borders: Mesh[] = [];
+
   private groundSize = {
     width: 56,
     height: 56,
@@ -40,10 +41,9 @@ export class Ground {
 
     ground.receiveShadows = true;
     ground.onAfterRenderObservable.addOnce(() => this.customLoading.hideLoading());
+    this.ground = ground;
 
     this.addGrass();
-
-    this.ground = ground;
   }
 
   public getGroundMesh() {
@@ -182,6 +182,7 @@ export class Ground {
       pbr.specularIntensity = 12;
 
       border.material = pbr;
+      this.borders.push(border);
     }
   }
 

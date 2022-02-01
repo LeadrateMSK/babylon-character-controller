@@ -5,6 +5,7 @@ import {
   Engine,
   KeyboardEventTypes,
   KeyboardInfo,
+  Mesh,
   Observer,
   Ray,
   Scene,
@@ -45,7 +46,7 @@ export class CharacterController {
 
   private jumpHeight = 0;
 
-  private character: AbstractMesh;
+  private character: Mesh;
 
   private isGrounded: boolean;
 
@@ -79,7 +80,7 @@ export class CharacterController {
     await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'character.glb', this.scene).then((result) => {
       const character = result.meshes[0];
       character.rotationQuaternion = null;
-      character.rotation = new Vector3(0, Tools.ToRadians(-40), 0);
+      character.rotation = new Vector3(0, Tools.ToRadians(-30), 0);
       character.scaling = new Vector3(0.5, 0.5, 0.5);
       character.checkCollisions = true;
       character.ellipsoid = new Vector3(0.5, 1, 0.5);
@@ -101,7 +102,7 @@ export class CharacterController {
         }
       };
 
-      this.character = character;
+      this.character = character as Mesh;
 
       this.idleAnim = this.scene.getAnimationGroupByName('Idle');
       this.runAnim = this.scene.getAnimationGroupByName('Run');
@@ -214,7 +215,7 @@ export class CharacterController {
         character.rotate(Vector3.Up(), rotationSpeed);
       }
 
-      // if only one keyS pressed
+      // if only one keyD pressed
       if (!inputs.KeyW && !inputs.KeyS) {
         if (isRunning) {
           character.moveWithCollisions(character.forward.scaleInPlace(runningSpeed));
@@ -233,7 +234,9 @@ export class CharacterController {
           this.isJumped = true;
           this.isRunningAnimated = false;
           this.isWalkingAnimated = false;
+          this.isWalkingBackAnimated = false;
         } else if ((inputs.KeyW || inputs.KeyD || inputs.KeyA) && isRunning && !this.isWalkingBackAnimated) {
+          // if Shift pressed with W/D/A
           if (!this.isRunningAnimated) {
             this.run();
             this.isRunningAnimated = true;
@@ -249,6 +252,7 @@ export class CharacterController {
           (inputs.KeyS && !this.isWalkingBackAnimated && !this.isWalkingAnimated && !inputs.KeyW)
           || (inputs.KeyS && (inputs.KeyA || inputs.KeyD) && !this.isWalkingBackAnimated && !inputs.KeyW)
         ) {
+          // if key S or (S with A or D) pressed when we release W key
           this.walkBackward();
           this.isRunningAnimated = false;
           this.isWalkingAnimated = false;
@@ -256,6 +260,12 @@ export class CharacterController {
         } else if (!this.isWalkingAnimated && !this.isWalkingBackAnimated) {
           // case to animate rotations
           this.walkForward();
+          this.isRunningAnimated = false;
+          this.isWalkingAnimated = true;
+        } else if ((inputs.KeyA || inputs.KeyD) && this.isWalkingBackAnimated && !inputs.KeyS) {
+          // if pressed A or D when we release the S key
+          this.walkForward();
+          this.isWalkingBackAnimated = false;
           this.isRunningAnimated = false;
           this.isWalkingAnimated = true;
         }

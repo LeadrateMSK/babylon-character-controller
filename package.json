@@ -52,12 +52,13 @@
     "vue-template-compiler": "^2.6.14"
   },
   "dependencies": {
-    "@babylonjs/loaders": "^4.2.1",
     "@babylonjs/core": "^4.2.1",
     "@babylonjs/inspector": "^4.2.1",
+    "@babylonjs/loaders": "^4.2.1",
     "babylonjs-gui": "^4.2.1",
     "cannon": "^0.6.2",
     "earcut": "^2.2.3",
+    "recast-detour": "^1.3.0",
     "swiper": "^7.4.1",
     "vue": "^2.6.14",
     "vuex": "^3.6.2"

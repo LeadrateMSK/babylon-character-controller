@@ -12,40 +12,45 @@ import {
 } from '@babylonjs/core';
 
 export class CustomModel {
+  constructor(scene: Scene, pointLight: PointLight) {
+    this.scene = scene;
+    this.pointLight = pointLight;
+  }
+
   scene: Scene;
 
   models: { [index: string]: AbstractMesh[] } = {};
 
   pointLight: PointLight;
 
-  constructor(scene: Scene, pointLight: PointLight) {
-    this.scene = scene;
-    this.pointLight = pointLight;
-    this.create();
-  }
+  bot: Mesh;
 
-  create() {
-    this.createSceneModels();
+  envObstacles: Mesh[] = [];
+
+  async create() {
+    await this.createSceneModels();
     this.createTreasures();
   }
 
-  createSceneModels() {
-    SceneLoader.ImportMesh('', '../../assets/models/', 'barrel.glb', this.scene, (meshes) => {
-      const barrel = meshes[0];
+  private async createSceneModels() {
+    await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'barrel.glb', this.scene).then((result) => {
+      const barrel = result.meshes[0];
 
-      meshes.forEach((mesh) => {
+      result.meshes.forEach((mesh) => {
         mesh.checkCollisions = true;
+        this.envObstacles.push(mesh as Mesh);
       });
 
       barrel.position = new Vector3(-6, 0, 14);
       barrel.receiveShadows = true;
     });
 
-    SceneLoader.ImportMesh('', '../../assets/models/', 'campfire.glb', this.scene, (meshes) => {
-      const campfire = meshes[0];
+    await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'campfire.glb', this.scene).then((result) => {
+      const campfire = result.meshes[0];
 
-      meshes.forEach((mesh) => {
+      result.meshes.forEach((mesh) => {
         mesh.checkCollisions = true;
+        this.envObstacles.push(mesh as Mesh);
       });
 
       campfire.position = new Vector3(-3, 0, 14);
@@ -89,11 +94,12 @@ export class CustomModel {
       }
     });
 
-    SceneLoader.ImportMesh('', '../../assets/models/', 'blacksmith.glb', this.scene, (meshes) => {
-      const blacksmith = meshes[0];
+    await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'blacksmith.glb', this.scene).then((result) => {
+      const blacksmith = result.meshes[0];
 
-      meshes.forEach((mesh) => {
+      result.meshes.forEach((mesh) => {
         mesh.checkCollisions = true;
+        this.envObstacles.push(mesh as Mesh);
       });
 
       blacksmith.scaling = new Vector3(3.8, 3.8, 3.8);
@@ -101,15 +107,16 @@ export class CustomModel {
       blacksmith.rotation = new Vector3(0, Tools.ToRadians(-140), 0);
     });
 
-    SceneLoader.ImportMesh('', '../../assets/models/', 'house.glb', this.scene, (meshes) => {
-      const blacksmith = meshes[0];
-      meshes.forEach((mesh) => {
+    await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'house.glb', this.scene).then((result) => {
+      const house = result.meshes[0];
+      result.meshes.forEach((mesh) => {
         mesh.checkCollisions = true;
+        this.envObstacles.push(mesh as Mesh);
       });
 
-      blacksmith.scaling = new Vector3(0.1, 0.1, 0.1);
-      blacksmith.position = new Vector3(-22, 0, 11);
-      blacksmith.rotation = new Vector3(0, Tools.ToRadians(130), 0);
+      house.scaling = new Vector3(0.1, 0.1, 0.1);
+      house.position = new Vector3(-22, 0, 11);
+      house.rotation = new Vector3(0, Tools.ToRadians(130), 0);
     });
   }
 
@@ -132,5 +139,20 @@ export class CustomModel {
         newTreasure.position.z = Scalar.RandomRange(-20, 10);
       }
     });
+  }
+
+  // private async createBot() {
+  //   await SceneLoader.ImportMeshAsync('', '../../assets/models/', 'bot.glb', this.scene).then((result) => {
+  //     const [bot] = result.meshes;
+
+  //     // result.meshes.forEach((mesh) => {
+  //     //   mesh.checkCollisions = true;
+  //     // });
+  //     this.bot = bot as Mesh;
+  //   });
+  // }
+
+  public getObstacleMeshes() {
+    return this.envObstacles;
   }
 }

@@ -65,7 +65,7 @@ export class CustomGUI {
     scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
     scoreText.paddingTopInPixels = 30;
-    scoreText.paddingLeftInPixels = 30;
+    scoreText.paddingLeftInPixels = 50;
     scoreText.outlineColor = 'black';
     scoreText.outlineWidth = 4;
     this.advancedTexture.addControl(scoreText);

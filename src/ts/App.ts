@@ -14,6 +14,7 @@ import { CustomPhysicsImpostor } from './Prefabs/CustomPhysicsImpostor';
 import { CustomGUI } from './GUI';
 import { AudioController } from './Prefabs/AudioController';
 import { CustomLoading } from './Prefabs/CustomLoading';
+import { CustomNavigation } from './Prefabs/CustomNavigation';
 
 class App {
   constructor(canvas: HTMLCanvasElement) {
@@ -69,6 +70,10 @@ class App {
     const skybox = new Skybox(scene);
 
     const customModel = new CustomModel(scene, pointLight);
+    await customModel.create();
+    const obstacles = customModel.getObstacleMeshes();
+
+    const customNavigation = new CustomNavigation(this.scene, character, obstacles, groundMesh);
 
     this.setSceneAnimationsBlending();
 

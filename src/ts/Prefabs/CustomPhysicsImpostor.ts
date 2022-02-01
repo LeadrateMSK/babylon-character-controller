@@ -31,15 +31,15 @@ export class CustomPhysicsImpostor {
       { mass: 0, restitution: 0 },
     );
 
-    const box1 = MeshBuilder.CreateBox('box1', { depth: 5, width: 3, height: 0.5 }, this.scene);
-    box1.position = new Vector3(-4, 10, 0);
-    box1.checkCollisions = true;
-    box1.showBoundingBox = true;
-    box1.physicsImpostor = new PhysicsImpostor(
-      box1,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 10, restitution: 1 },
-    );
+    // const box1 = MeshBuilder.CreateBox('box1', { depth: 5, width: 3, height: 0.5 }, this.scene);
+    // box1.position = new Vector3(-4, 10, 0);
+    // box1.checkCollisions = true;
+    // box1.showBoundingBox = true;
+    // box1.physicsImpostor = new PhysicsImpostor(
+    //   box1,
+    //   PhysicsImpostor.BoxImpostor,
+    //   { mass: 10, restitution: 1 },
+    // );
   }
 
   async createRocket(): Promise<void> {
