@@ -56,7 +56,7 @@ export class Ground {
 
   private createGroundMaterial(): StandardMaterial {
     const groundMat = new StandardMaterial('groundMat', this.scene);
-    const uvScale = 4;
+    // const uvScale = 4;
     const textureArr: Texture[] = [];
 
     const diffuseTexture = new Texture('../../assets/textures/rocks/aerial_rocks_diff.jpg', this.scene);

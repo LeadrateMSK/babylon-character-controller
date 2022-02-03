@@ -1,7 +1,5 @@
 import {
-  Engine,
   ILoadingScreen,
-  Scene,
 } from '@babylonjs/core';
 
 export class CustomLoadingScreen implements ILoadingScreen {

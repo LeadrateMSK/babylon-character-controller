@@ -24,14 +24,17 @@ class App {
 
   canvas: HTMLCanvasElement;
 
+  engine: Engine;
+
   scene: Scene;
 
   customLoading: CustomLoading;
 
   async create() {
     const engine = new Engine(this.canvas);
+    this.engine = engine;
 
-    this.createLoading(engine);
+    this.createLoading();
     this.customLoading.displayLoading();
 
     const scene = new Scene(engine);
@@ -93,10 +96,10 @@ class App {
     this.scene.animationPropertiesOverride.loopMode = 1;
   }
 
-  private createLoading(engine: Engine) {
+  private createLoading() {
     const loader = document.getElementById('loader') as HTMLElement;
 
-    const customLoading = new CustomLoading(engine, loader);
+    const customLoading = new CustomLoading(this.engine, loader);
 
     this.customLoading = customLoading;
   }
